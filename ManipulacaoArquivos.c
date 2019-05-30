@@ -1,70 +1,43 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
+int main(){
+	char NOME1[256], NOME2[256], linha[256];
+	FILE *arquivo_Escreve;//FILE * eh um ponteiro de arquivo, basicamente eh o que serve pra indicar pro programa onde esta e qual arquivo voce vai mexer
+	FILE *arquivo_Ler;//Nao acho que precisa ter um ponteiro pra abrir e outro pra fechar mas eu gosto de ter pra organizar (ponteiros podem ter qlqr nome alias)
 
-void main(){
-    int choice, i; //Variaveis de contador e escolha
-    char linguagem[50], Nome[256], linha[256]; //strings de nome e busca
-    FILE *arquivo, *lista; //Ponteiros de arquivos
+	arquivo_Escreve = fopen("teste.txt", "a");//Abrindo o arquivo pra adicionar, o que as letras de abertura fazem (a, r, w, etc) tem no pdf do professor
+		
+		fgets(NOME1, 256, stdin);//Ler o nome e talz
+		
+		fprintf(arquivo_Escreve, "%s", NOME1);//Printar no arquivo (fgets coloca o \n por isso nao botei)
+	
+	fclose(arquivo_Escreve);//SEMPRE feche o arquivo depois de mexer com ele...SEMPRE
 
-    printf("1)Cadastrar\n2)Excluir\nDigite o numero da sua opcao: ");
-    scanf("%d", &choice);
+	fgets(NOME2, 256, stdin);//Ler a string que a gente quer procurar no arquivo
 
-    if(choice == 1){
-        printf("Digite a linguagem: ");
+	arquivo_Ler = fopen("teste.txt", "r");//r eh pra ler...duh
+		
+		while(!feof(arquivo_Ler)){//A funcao feof retorna 0 no ponteiro quando o final do arquivo eh encontrado
+			
+			fgets(linha, 256, arquivo_Ler);//Pegar a linha do arquivo pra comparar
 
-        fflush(stdin); //Limpar o teclado de lixo de memoria
-        scanf("%[^\n]s", linguagem);
+			if(strcmp(linha, NOME2) == 0){//Comparar a linha e o nome
+				break;//Sair do loop
+			}
+		};
+	fclose(arquivo_Ler);
+		printf(">>%s", linha);//Quando voce busca do arquivo ja tem um \n, soh um lembrete msm
 
-        for(i = 0; i < strlen(linguagem); i++){
-            linguagem[i] = toupper(linguagem[i]); //colocar cada letra da string em maiuscula
-        }
+	//Soh pra facilitar a vizualizacao vou printar o arquivo todo
 
-        snprintf(Nome, 256, "C:\\Users\\Álvaro\\Desktop\\%s.txt", linguagem); //Concatenar strings para nomear o arquivo (PARTE OPCIONAL PARA MANUSEIO DE ARQUIVOS MAS NESSE CASO EU ESTOU DEFININDO DIRETORIO ESPECIFICO)
-
-        arquivo = fopen(Nome, "r"); //Abrir para leitura
-
-        fclose(arquivo); //Fechar o Arquivo
-
-        if(arquivo != NULL){ //Conferir existencia
-            printf("Essa linguagem ja foi cadastrada!\n");
-        }else{
-            arquivo = fopen(Nome, "w"); //Criar o arquivo
-
-                fprintf(arquivo, "Linguagem: %s\n", linguagem); //Colocar as informacoes no arquivo
-
-            fclose(arquivo); //Fechar o arquivo
-
-            arquivo = fopen("C:\\Users\\Álvaro\\Desktop\\lista.txt", "a"); //Abrir para criar/adicionar no outro arquivo
-
-                fprintf(arquivo, "%s\n", linguagem); //Colocar as informacoes la
-
-            fclose(arquivo); //Fechar o arquivo
-        }
-    }else{
-            printf("Digite a linguagem que deseja apagar: ");
-
-            fflush(stdin);
-
-            scanf("%[^\n]s", linguagem); //Ler string
-
-            lista = fopen("C:\\Users\\Álvaro\\Desktop\\lista.txt", "r"); //Abrir o arquivo para leitura
-                do{ //Inicio do loop
-
-                    fscanf(lista, "%s", linha); //Scanear a linha do arquivo para comparar
-
-                    if(strcmp(linguagem, linha) == 0){ //comprara a linha com  o que foi digitado
-
-                        snprintf(Nome, 256, "C:\\Users\\Álvaro\\Desktop\\%s.txt", linguagem); //concatenar para gerar o nome do arquivo caso seja o que se procura
-                    }
-
-                    remove(Nome); //deletar o arquvo
-
-                }while(feof(lista)); //Condicional de repeticao ate o final do arquivo
-
-                fclose(lista);// fechar o arquivo
-
-
-    }
-
+	arquivo_Ler = fopen("teste.txt", "r");
+		while(!feof(arquivo_Ler)){
+			fgets(linha, 256, arquivo_Ler);
+			if(!feof(arquivo_Ler)){//Isso eh pra evitar de printar a ultima linha duas vezes pq bugs
+				printf("%s", linha);
+			}
+		};
+	fclose(arquivo_Ler);
 }
